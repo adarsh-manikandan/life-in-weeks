@@ -296,9 +296,7 @@ export default function LifeInWeeks({
           <div className="relative mb-6 print:mb-8">
             <div className="relative bg-white rounded-xl px-6 py-4 border-2 border-black print:text-base">
               <p className="text-sm leading-relaxed">
-                Each square represents one week of your life. Orange squares show weeks you've lived,
-                and white squares represent your future weeks. Of these future weeks, you'll spend 33%
-                dreaming and 67% awake.
+                Each square represents one week of your life.
               </p>
             </div>
           </div>
