@@ -262,19 +262,38 @@ export default function LifeInWeeks({
     url.searchParams.set('age', age.toString());
     url.searchParams.set('country', country);
     
+    // Track share button click
+    trackEvent('Share Button Clicked', {
+      age,
+      country,
+      lifeExpectancy,
+      timestamp: new Date().toISOString()
+    });
+
     navigator.clipboard.writeText(url.toString())
       .then(() => {
         setShowToast(true);
-        trackEvent('Share Link Generated', {
+        trackEvent('Share Link Copied', {
           age,
           country,
           lifeExpectancy,
+          url: url.toString(),
+          status: 'success',
           timestamp: new Date().toISOString()
         });
       })
       .catch(error => {
         console.error('Failed to copy link:', error);
         alert('Failed to copy share link. Please try again.');
+        trackEvent('Share Link Failed', {
+          age,
+          country,
+          lifeExpectancy,
+          url: url.toString(),
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          timestamp: new Date().toISOString()
+        });
       });
   };
 
@@ -293,45 +312,45 @@ export default function LifeInWeeks({
           <div className="relative mb-8 print:mb-12">
             <div className="absolute inset-0 bg-black rounded-xl translate-x-2 translate-y-2 print:translate-x-1 print:translate-y-1"></div>
             <div className="relative bg-[#FFDE59] rounded-xl border-2 border-black p-6 pdf-preserve-transform">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-start">
                 <div className="flex-1">
                   <h1 className="text-4xl font-black print:text-5xl">Life in Weeks</h1>
                   <p className="text-sm mt-2 font-medium print:text-base">Visualize your life journey, one week at a time.</p>
                 </div>
-                <div className="no-print print:hidden flex gap-2">
+                <div className="no-print print:hidden flex flex-row sm:flex-row gap-2 justify-start sm:justify-end">
                   <button
                     onClick={handleShare}
-                    className="relative transform transition-all hover:-translate-x-1 hover:-translate-y-1 group"
+                    className="relative transform transition-all hover:-translate-x-1 hover:-translate-y-1 group flex-1 sm:flex-initial w-full sm:w-auto"
                   >
-                    <div className="absolute inset-0 bg-black rounded-xl translate-x-2 translate-y-2"></div>
-                    <div className="relative bg-white border-2 border-black rounded-xl px-4 py-2 flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute inset-0 bg-black rounded-xl translate-x-1.5 translate-y-1.5 sm:translate-x-2 sm:translate-y-2"></div>
+                    <div className="relative bg-white border-2 border-black rounded-xl px-4 py-2 flex items-center justify-center gap-2 w-full">
+                      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                       </svg>
-                      <span className="font-bold">Share</span>
+                      <span className="font-bold whitespace-nowrap">Share</span>
                     </div>
                   </button>
                   <button
                     onClick={handleDownloadPDF}
                     disabled={isGeneratingPDF}
-                    className="relative transform transition-all hover:-translate-x-1 hover:-translate-y-1 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative transform transition-all hover:-translate-x-1 hover:-translate-y-1 group flex-1 sm:flex-initial w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <div className="absolute inset-0 bg-black rounded-xl translate-x-2 translate-y-2"></div>
-                    <div className="relative bg-white border-2 border-black rounded-xl px-4 py-2 flex items-center gap-2">
+                    <div className="absolute inset-0 bg-black rounded-xl translate-x-1.5 translate-y-1.5 sm:translate-x-2 sm:translate-y-2"></div>
+                    <div className="relative bg-white border-2 border-black rounded-xl px-4 py-2 flex items-center justify-center gap-2 w-full">
                       {isGeneratingPDF ? (
                         <>
-                          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <svg className="animate-spin h-5 w-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          <span className="font-bold">Generating...</span>
+                          <span className="font-bold whitespace-nowrap">Generating...</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
-                          <span className="font-bold">Download PDF</span>
+                          <span className="font-bold whitespace-nowrap">Download PDF</span>
                         </>
                       )}
                     </div>
@@ -450,25 +469,35 @@ export default function LifeInWeeks({
 
         {/* Second Page Content - Grid */}
         <div className="pdf-page break-before-page print:mt-0">
-          <div className="bg-white rounded-xl border-2 border-black p-6 shadow-lg print:shadow-none">
-            <div className="grid grid-cols-52 gap-[2px] justify-center print:gap-[1px]">
-              {Array.from({ length: weeksLived + sleepWeeks + awakeWeeks }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-3 h-3 border border-black rounded-sm relative transform transition-transform hover:scale-150 hover:z-10 group ${
-                    i < weeksLived
-                      ? 'bg-gradient-to-br from-orange-300 to-orange-400'
-                      : 'bg-white'
-                  } print:w-2.5 print:h-2.5 print:transform-none print:transition-none print:hover:transform-none`}
-                >
-                  <div className="opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-1
-                    bg-black text-white text-xs py-1 px-2 rounded-md whitespace-nowrap z-20 pointer-events-none print:hidden">
-                    Week {i + 1} ({Math.floor(i / 52) + 1} years)
-                  </div>
+          <div className="bg-white rounded-xl border-2 border-black p-4 sm:p-6 shadow-lg print:shadow-none">
+            <div className="w-full overflow-visible">
+              <div className="w-[calc(26*16px+25*2px)] sm:w-full mx-auto relative">
+                <div className="flex flex-wrap gap-[2px]">
+                  {Array.from({ length: weeksLived + sleepWeeks + awakeWeeks }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-4 h-4 border border-black rounded-sm relative transform transition-transform hover:scale-150 hover:z-20 group ${
+                        i < weeksLived
+                          ? 'bg-gradient-to-br from-orange-300 to-orange-400'
+                          : 'bg-white'
+                      } print:transform-none print:transition-none print:hover:transform-none`}
+                    >
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2
+                        bg-black text-white text-[10px] sm:text-xs py-1 px-2 rounded-md whitespace-nowrap z-30 pointer-events-none print:hidden
+                        shadow-lg">
+                        Week {i + 1} ({Math.floor(i / 52) + 1} years)
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Attribution */}
+        <div className="text-center text-sm text-gray-600 mt-8 print:mt-12">
+          Inspired by Wait But Why, <a href="https://waitbutwhy.com/2014/05/life-weeks.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Life in Weeks</a>
         </div>
       </div>
     </div>

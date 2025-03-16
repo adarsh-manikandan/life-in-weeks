@@ -4,6 +4,9 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
+        '6': 'repeat(6, minmax(0, 1fr))',
+        '13': 'repeat(13, minmax(0, 1fr))',
+        '26': 'repeat(26, minmax(0, 1fr))',
         '52': 'repeat(52, minmax(0, 1fr))',
       },
       keyframes: {
