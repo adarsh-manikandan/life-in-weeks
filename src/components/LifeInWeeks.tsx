@@ -51,7 +51,7 @@ const COUNTRY_LIFE_EXPECTANCY: Record<string, number> = {
   "Other": 80
 };
 
-const DEFAULT_COUNTRY = 'Hong Kong';
+const DEFAULT_COUNTRY = 'India';
 const DEFAULT_AGE = 30;
 
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
