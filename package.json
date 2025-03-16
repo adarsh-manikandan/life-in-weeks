@@ -12,15 +12,19 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
     "@vercel/analytics": "^1.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.344.0",
+    "mixpanel-browser": "^2.61.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/mixpanel-browser": "^2.51.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
