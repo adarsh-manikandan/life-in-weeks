@@ -8,20 +8,50 @@ interface LifeInWeeksProps {
 }
 
 const COUNTRY_LIFE_EXPECTANCY: Record<string, number> = {
-  "United States": 77,
-  "United Kingdom": 81,
-  "Canada": 82,
-  "Australia": 83,
-  "Germany": 81,
-  "France": 82,
-  "Japan": 85,
-  "India": 70,
-  "China": 77,
-  "Brazil": 76,
-  "Other": 80,
+  "Hong Kong": 85.63,
+  "Japan": 84.85,
+  "South Korea": 84.43,
+  "Switzerland": 84.09,
+  "Australia": 84.07,
+  "Italy": 83.87,
+  "Singapore": 83.86,
+  "Spain": 83.80,
+  "Norway": 83.46,
+  "France": 83.46,
+  "Sweden": 83.42,
+  "Iceland": 83.01,
+  "Israel": 82.73,
+  "Canada": 82.72,
+  "Ireland": 82.58,
+  "Portugal": 82.55,
+  "Netherlands": 82.30,
+  "Belgium": 82.27,
+  "New Zealand": 82.25,
+  "Austria": 82.12,
+  "Denmark": 82.09,
+  "Finland": 82.08,
+  "Greece": 82.03,
+  "Germany": 81.54,
+  "United Kingdom": 81.45,
+  "Chile": 81.36,
+  "Taiwan": 80.75,
+  "United States": 79.46,
+  "Poland": 78.81,
+  "China": 78.02,
+  "Brazil": 76.02,
+  "Mexico": 75.26,
+  "Vietnam": 74.74,
+  "Russia": 73.34,
+  "India": 72.24,
+  "Indonesia": 71.29,
+  "Philippines": 69.95,
+  "Pakistan": 67.80,
+  "South Africa": 66.31,
+  "Nigeria": 54.64,
+  "Other": 80
 };
 
-const DEFAULT_COUNTRY = 'India';
+const DEFAULT_COUNTRY = 'Hong Kong';
 const DEFAULT_AGE = 30;
 
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
@@ -264,16 +294,46 @@ export default function LifeInWeeks({
                     onChange={handleCountryChange}
                     className="w-full p-3 rounded-xl border-2 border-black bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-black appearance-none cursor-pointer print:shadow-none print:bg-white"
                   >
-                    <option value="India">India</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Germany">Germany</option>
-                    <option value="France">France</option>
+                    <option value="Hong Kong">Hong Kong</option>
                     <option value="Japan">Japan</option>
+                    <option value="South Korea">South Korea</option>
+                    <option value="Switzerland">Switzerland</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Italy">Italy</option>
+                    <option value="Singapore">Singapore</option>
+                    <option value="Spain">Spain</option>
+                    <option value="Norway">Norway</option>
+                    <option value="France">France</option>
+                    <option value="Sweden">Sweden</option>
+                    <option value="Iceland">Iceland</option>
+                    <option value="Israel">Israel</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Ireland">Ireland</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="Netherlands">Netherlands</option>
+                    <option value="Belgium">Belgium</option>
+                    <option value="New Zealand">New Zealand</option>
+                    <option value="Austria">Austria</option>
+                    <option value="Denmark">Denmark</option>
+                    <option value="Finland">Finland</option>
+                    <option value="Greece">Greece</option>
+                    <option value="Germany">Germany</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Taiwan">Taiwan</option>
+                    <option value="United States">United States</option>
+                    <option value="Poland">Poland</option>
                     <option value="China">China</option>
                     <option value="Brazil">Brazil</option>
+                    <option value="Mexico">Mexico</option>
+                    <option value="Vietnam">Vietnam</option>
+                    <option value="Russia">Russia</option>
+                    <option value="India">India</option>
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="Philippines">Philippines</option>
+                    <option value="Pakistan">Pakistan</option>
+                    <option value="South Africa">South Africa</option>
+                    <option value="Nigeria">Nigeria</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
