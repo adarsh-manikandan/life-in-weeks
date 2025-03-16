@@ -7,7 +7,8 @@ console.log('Initializing Mixpanel with token:', token ? 'Token exists' : 'No to
 mixpanel.init(token, {
   debug: true, // Enable debug mode to see tracking in console
   track_pageview: true,
-  persistence: 'localStorage'
+  persistence: 'localStorage',
+  ignore_dnt: true // Ignore Do Not Track setting
 });
 
 // Track page views
