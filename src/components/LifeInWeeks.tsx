@@ -84,7 +84,7 @@ export default function LifeInWeeks({
   initialLifeExpectancy = COUNTRY_LIFE_EXPECTANCY[DEFAULT_COUNTRY]
 }: LifeInWeeksProps) {
   const [age, setAge] = useState<number>(initialAge);
-  const [country, setCountry] = useState<string>(initialCountry);
+  const [country, setCountry] = useState<string>(DEFAULT_COUNTRY);
   const [lifeExpectancy, setLifeExpectancy] = useState<number>(COUNTRY_LIFE_EXPECTANCY[DEFAULT_COUNTRY]);
   const [showToast, setShowToast] = useState(false);
 
@@ -121,6 +121,9 @@ export default function LifeInWeeks({
     if (countryParam && COUNTRY_LIFE_EXPECTANCY[countryParam]) {
       setCountry(countryParam);
       setLifeExpectancy(COUNTRY_LIFE_EXPECTANCY[countryParam]);
+    } else {
+      setCountry(DEFAULT_COUNTRY);
+      setLifeExpectancy(COUNTRY_LIFE_EXPECTANCY[DEFAULT_COUNTRY]);
     }
   }, []);
 
@@ -294,6 +297,7 @@ export default function LifeInWeeks({
                     onChange={handleCountryChange}
                     className="w-full p-3 rounded-xl border-2 border-black bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-black appearance-none cursor-pointer print:shadow-none print:bg-white"
                   >
+                    <option value="India">India</option>
                     <option value="Hong Kong">Hong Kong</option>
                     <option value="Japan">Japan</option>
                     <option value="South Korea">South Korea</option>
@@ -328,7 +332,6 @@ export default function LifeInWeeks({
                     <option value="Mexico">Mexico</option>
                     <option value="Vietnam">Vietnam</option>
                     <option value="Russia">Russia</option>
-                    <option value="India">India</option>
                     <option value="Indonesia">Indonesia</option>
                     <option value="Philippines">Philippines</option>
                     <option value="Pakistan">Pakistan</option>
