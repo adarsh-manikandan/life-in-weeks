@@ -344,9 +344,9 @@ export default function LifeInWeeks({
 
         {/* Second Page Content - Grid */}
         <div className="pdf-page break-before-page print:mt-0">
-          <div className="bg-white rounded-xl border-2 border-black p-4 sm:p-6 shadow-lg print:shadow-none">
-            <div className="w-full overflow-visible">
-              <div className="w-[calc(26*16px+25*2px)] sm:w-full mx-auto relative">
+          <div className="bg-white rounded-xl border-2 border-black p-3 sm:p-6 shadow-lg print:shadow-none">
+            <div className="w-full overflow-x-auto sm:overflow-visible">
+              <div className="min-w-[calc(20*16px+19*2px)] w-fit sm:w-[calc(26*16px+25*2px)] mx-auto relative px-2 sm:px-0">
                 <div className="flex flex-wrap gap-[2px]">
                   {Array.from({ length: weeksLived + sleepWeeks + awakeWeeks }).map((_, i) => (
                     <div
