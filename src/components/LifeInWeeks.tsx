@@ -68,6 +68,7 @@ export default function LifeInWeeks({
     trackPageView('Life in Weeks');
     
     // Track initial state
+    console.log('Tracking initial state');
     trackEvent('Initial State', {
       age,
       country,
