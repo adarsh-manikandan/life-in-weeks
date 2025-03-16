@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
+import { trackPageView, trackEvent } from '../lib/mixpanel';
 
 interface LifeInWeeksProps {
   initialAge?: number;
@@ -24,6 +25,30 @@ const COUNTRY_LIFE_EXPECTANCY: Record<string, number> = {
 const DEFAULT_COUNTRY = 'India';
 const DEFAULT_AGE = 30;
 
+function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-slide-down">
+      <div className="relative">
+        <div className="absolute inset-0 bg-black rounded-xl translate-x-2 translate-y-2"></div>
+        <div className="relative bg-white border-2 border-black rounded-xl px-6 py-3 flex items-center gap-3">
+          <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="font-bold">{message}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LifeInWeeks({ 
   initialAge = DEFAULT_AGE,
   initialCountry = DEFAULT_COUNTRY,
@@ -33,8 +58,42 @@ export default function LifeInWeeks({
   const [country, setCountry] = useState<string>(initialCountry);
   const [lifeExpectancy, setLifeExpectancy] = useState<number>(COUNTRY_LIFE_EXPECTANCY[DEFAULT_COUNTRY]);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Track page view on component mount
+  useEffect(() => {
+    console.log('Component mounted, tracking page view');
+    trackPageView('Life in Weeks');
+    
+    // Track initial state
+    trackEvent('Initial State', {
+      age,
+      country,
+      lifeExpectancy,
+      timestamp: new Date().toISOString()
+    });
+  }, []);
+
+  // Get URL parameters on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ageParam = params.get('age');
+    const countryParam = params.get('country');
+    
+    if (ageParam) {
+      const parsedAge = parseInt(ageParam);
+      if (!isNaN(parsedAge) && parsedAge >= 0) {
+        setAge(parsedAge);
+      }
+    }
+    
+    if (countryParam && COUNTRY_LIFE_EXPECTANCY[countryParam]) {
+      setCountry(countryParam);
+      setLifeExpectancy(COUNTRY_LIFE_EXPECTANCY[countryParam]);
+    }
+  }, []);
 
   // Calculate weeks
   const calculateWeeks = (currentAge: number, expectancy: number) => {
@@ -58,24 +117,37 @@ export default function LifeInWeeks({
     percentageLived
   } = calculateWeeks(age, lifeExpectancy);
 
-  // Handle country change
+  // Track country changes
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCountry = e.target.value;
     setCountry(newCountry);
     setLifeExpectancy(COUNTRY_LIFE_EXPECTANCY[newCountry]);
+    
+    // Track country change event
+    trackEvent('Country Changed', {
+      from: country,
+      to: newCountry,
+      newLifeExpectancy: COUNTRY_LIFE_EXPECTANCY[newCountry],
+      timestamp: new Date().toISOString()
+    });
   };
 
-  // Input handlers with validation
+  // Track age changes
   const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    // Remove leading zeros and convert to number
     const cleanValue = rawValue.replace(/^0+/, '');
     const value = Number(cleanValue);
     
     if (value >= 0) {
       setAge(value);
-      // Update input value to remove leading zeros
       e.target.value = cleanValue;
+      
+      // Track age change event
+      trackEvent('Age Changed', {
+        from: age,
+        to: value,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
@@ -86,12 +158,20 @@ export default function LifeInWeeks({
     }
   };
 
+  // Track PDF downloads
   const handleDownloadPDF = async () => {
     const element = contentRef.current;
     if (!element) return;
 
     try {
       setIsGeneratingPDF(true);
+      trackEvent('PDF Download Started', {
+        age,
+        country,
+        lifeExpectancy,
+        timestamp: new Date().toISOString()
+      });
+
       const opt = {
         margin: [20, 20],
         filename: 'life-in-weeks.pdf',
@@ -155,16 +235,57 @@ export default function LifeInWeeks({
       };
 
       await html2pdf().set(opt).from(element).save();
+
+      trackEvent('PDF Download Completed', {
+        age,
+        country,
+        lifeExpectancy,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
       console.error('Error generating PDF:', error);
+      trackEvent('PDF Download Failed', {
+        age,
+        country,
+        lifeExpectancy,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
       alert('There was an error generating the PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
+  const handleShare = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('age', age.toString());
+    url.searchParams.set('country', country);
+    
+    navigator.clipboard.writeText(url.toString())
+      .then(() => {
+        setShowToast(true);
+        trackEvent('Share Link Generated', {
+          age,
+          country,
+          lifeExpectancy,
+          timestamp: new Date().toISOString()
+        });
+      })
+      .catch(error => {
+        console.error('Failed to copy link:', error);
+        alert('Failed to copy share link. Please try again.');
+      });
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 font-sans">
+      {showToast && (
+        <Toast 
+          message="Link copied to clipboard!" 
+          onClose={() => setShowToast(false)} 
+        />
+      )}
       <div ref={contentRef}>
         {/* First Page Content */}
         <div className="pdf-page print:mb-8">
@@ -177,7 +298,19 @@ export default function LifeInWeeks({
                   <h1 className="text-4xl font-black print:text-5xl">Life in Weeks</h1>
                   <p className="text-sm mt-2 font-medium print:text-base">Visualize your life journey, one week at a time.</p>
                 </div>
-                <div className="no-print print:hidden">
+                <div className="no-print print:hidden flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    className="relative transform transition-all hover:-translate-x-1 hover:-translate-y-1 group"
+                  >
+                    <div className="absolute inset-0 bg-black rounded-xl translate-x-2 translate-y-2"></div>
+                    <div className="relative bg-white border-2 border-black rounded-xl px-4 py-2 flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      <span className="font-bold">Share</span>
+                    </div>
+                  </button>
                   <button
                     onClick={handleDownloadPDF}
                     disabled={isGeneratingPDF}
