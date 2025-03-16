@@ -357,7 +357,7 @@ export default function LifeInWeeks({
                           : 'bg-white'
                       } print:transform-none print:transition-none print:hover:transform-none`}
                     >
-                      <div className="opacity-0 group-hover:opacity-100 fixed sm:absolute bottom-20 sm:-top-8 left-1/2 -translate-x-1/2
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2
                         bg-black text-white text-[10px] sm:text-xs py-1 px-2 rounded-md whitespace-nowrap z-50 pointer-events-none print:hidden
                         shadow-lg">
                         Week {i + 1} ({Math.floor(i / 52) + 1} years)
